@@ -16,8 +16,23 @@ const App = () => {
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem("cvvin_token");
-    setIsAuthenticated(!!token);
+    const checkAuth = () => {
+      const token = localStorage.getItem("cvvin_token");
+      setIsAuthenticated(!!token);
+    };
+    
+    checkAuth();
+    
+    // Listen for storage changes (when token is added/removed)
+    window.addEventListener('storage', checkAuth);
+    
+    // Also listen for a custom event when login happens in the same tab
+    window.addEventListener('cvvin-auth-change', checkAuth);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+      window.removeEventListener('cvvin-auth-change', checkAuth);
+    };
   }, []);
 
   if (isAuthenticated === null) {

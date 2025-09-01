@@ -26,6 +26,10 @@ const Login = () => {
     // Simulate API call
     setTimeout(() => {
       localStorage.setItem("cvvin_token", token);
+      
+      // Trigger auth state update
+      window.dispatchEvent(new Event('cvvin-auth-change'));
+      
       toast({
         title: "Success",
         description: "Logged in successfully!",
