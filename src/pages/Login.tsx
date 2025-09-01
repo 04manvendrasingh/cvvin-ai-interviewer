@@ -4,18 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
-  const [token, setToken] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    if (!token.trim()) {
+  const handleAuth = async (type: 'login' | 'signup') => {
+    if (!email.trim() || !password.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a token",
+        title: "Error", 
+        description: "Please enter both email and password",
         variant: "destructive",
       });
       return;
@@ -25,18 +27,39 @@ const Login = () => {
     
     // Simulate API call
     setTimeout(() => {
-      localStorage.setItem("cvvin_token", token);
+      const userData = {
+        email,
+        id: Date.now().toString(),
+        name: email.split('@')[0],
+        hasProfile: type === 'login' // Simulate existing profile for login
+      };
+      
+      localStorage.setItem("cvvin_token", JSON.stringify(userData));
+      localStorage.setItem("cvvin_user", JSON.stringify(userData));
       
       // Trigger auth state update
       window.dispatchEvent(new Event('cvvin-auth-change'));
       
       toast({
         title: "Success",
-        description: "Logged in successfully!",
+        description: type === 'login' ? "Logged in successfully!" : "Account created successfully!",
       });
-      navigate("/");
+      
+      // Route based on profile completion
+      if (type === 'signup' || !userData.hasProfile) {
+        navigate("/profile/setup");
+      } else {
+        navigate("/dashboard");
+      }
       setIsLoading(false);
     }, 1000);
+  };
+
+  const handleGoogleAuth = () => {
+    toast({
+      title: "Coming Soon",
+      description: "Google authentication will be available soon",
+    });
   };
 
   return (
@@ -48,31 +71,92 @@ const Login = () => {
           </div>
           <CardTitle className="text-2xl font-semibold">Welcome to CVVIN</CardTitle>
           <CardDescription>
-            Enter your access token to start your AI-powered interview practice
+            AI-powered interview practice platform
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="token">Access Token</Label>
-            <Input
-              id="token"
-              type="password"
-              placeholder="Enter your token..."
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleLogin()}
-            />
-          </div>
-          <Button 
-            onClick={handleLogin} 
-            className="w-full" 
-            disabled={isLoading}
-          >
-            {isLoading ? "Authenticating..." : "Sign In"}
-          </Button>
-          <div className="text-center text-sm text-muted-foreground">
-            Demo token: <code className="bg-muted px-2 py-1 rounded">demo-token-123</code>
-          </div>
+        <CardContent>
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="login">Log in</TabsTrigger>
+              <TabsTrigger value="signup">Sign up</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="login" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="login-email">Email</Label>
+                <Input
+                  id="login-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="login-password">Password</Label>
+                <Input
+                  id="login-password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleAuth('login')}
+                />
+              </div>
+              <Button 
+                onClick={() => handleAuth('login')}
+                className="w-full" 
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing in..." : "Log in"}
+              </Button>
+              <Button 
+                onClick={handleGoogleAuth}
+                variant="outline" 
+                className="w-full"
+              >
+                Continue with Google
+              </Button>
+            </TabsContent>
+            
+            <TabsContent value="signup" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="signup-email">Email</Label>
+                <Input
+                  id="signup-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signup-password">Password</Label>
+                <Input
+                  id="signup-password"
+                  type="password"
+                  placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleAuth('signup')}
+                />
+              </div>
+              <Button 
+                onClick={() => handleAuth('signup')}
+                className="w-full" 
+                disabled={isLoading}
+              >
+                {isLoading ? "Creating account..." : "Sign up"}
+              </Button>
+              <Button 
+                onClick={handleGoogleAuth}
+                variant="outline" 
+                className="w-full"
+              >
+                Continue with Google
+              </Button>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

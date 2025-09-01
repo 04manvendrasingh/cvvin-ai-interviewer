@@ -142,6 +142,39 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Flagship CTA */}
+        <Card className="card-shadow mb-8 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
+          <CardContent className="p-8 text-center">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-2xl font-bold text-foreground mb-3">
+                Ready for the Complete Experience?
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Take our full 2-2.5 hour interview simulation with resume analysis, technical questions, coding challenges, and HR interview.
+              </p>
+              <Link to="/mock/full">
+                <Button 
+                  size="lg" 
+                  className="px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  title="A full 2–2.5 hour interview simulation (Resume→Tech MCQs→Coding→HR) with detailed proctoring & feedback."
+                >
+                  Start End-to-End Mock Interview
+                </Button>
+              </Link>
+              <div className="flex items-center justify-center space-x-4 mt-4 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1">
+                  <Clock className="w-4 h-4" />
+                  <span>2-2.5 hours</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <BarChart3 className="w-4 h-4" />
+                  <span>Detailed feedback</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Recent Activity */}
         <Card className="card-shadow">
           <CardHeader>

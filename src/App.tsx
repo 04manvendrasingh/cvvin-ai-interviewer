@@ -6,7 +6,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import ProfileSetup from "./pages/ProfileSetup";
+import Profile from "./pages/Profile";
 import Analyze from "./pages/Analyze";
+import MockInterview from "./pages/MockInterview";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,17 +56,23 @@ const App = () => {
           <Routes>
             {!isAuthenticated ? (
               <>
-                <Route path="/login" element={<Login />} />
-                <Route path="*" element={<Navigate to="/login" replace />} />
+                <Route path="/auth" element={<Login />} />
+                <Route path="/login" element={<Navigate to="/auth" replace />} />
+                <Route path="*" element={<Navigate to="/auth" replace />} />
               </>
             ) : (
               <>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/profile/setup" element={<ProfileSetup />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/analyze" element={<Analyze />} />
+                <Route path="/mock/full" element={<MockInterview />} />
                 <Route path="/tech" element={<div>Tech Interview (Coming Soon)</div>} />
                 <Route path="/hr" element={<div>HR Interview (Coming Soon)</div>} />
                 <Route path="/feedback" element={<div>Feedback (Coming Soon)</div>} />
-                <Route path="/login" element={<Navigate to="/" replace />} />
+                <Route path="/auth" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/login" element={<Navigate to="/dashboard" replace />} />
                 <Route path="*" element={<NotFound />} />
               </>
             )}
