@@ -20,8 +20,21 @@ const App = () => {
   useEffect(() => {
     // Check if user is authenticated
     const checkAuth = () => {
-      const token = localStorage.getItem("cvvin_token");
-      setIsAuthenticated(!!token);
+      try {
+        const token = localStorage.getItem("cvvin_token");
+        // Check if token exists and is valid JSON
+        if (token) {
+          JSON.parse(token); // Validate JSON format
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        // If token is corrupted, remove it and set as unauthenticated
+        localStorage.removeItem("cvvin_token");
+        localStorage.removeItem("cvvin_user");
+        setIsAuthenticated(false);
+      }
     };
     
     checkAuth();
